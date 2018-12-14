@@ -9,4 +9,11 @@
   (loop [idx-1 0
          idx-2 1
          recipies [3 7]]
-    (let [sum (+ (recipies idx-1) (recipies idx-2))])))
+    (let [recipie-1 (recipies idx-1)
+          recipie-2 (recipies idx-2)
+          sum (+ recipie-1 recipie-2)
+          recipies (apply conj recipies (digits sum))
+          c (count recipies)]
+      (if (> c 10)
+        recipies
+        (recur (mod (inc recipie-1) c) (mod (inc recipie-2) c) recipies)))))
