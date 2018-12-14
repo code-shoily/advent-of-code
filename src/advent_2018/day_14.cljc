@@ -8,12 +8,13 @@
 (defn part-1 []
   (loop [idx-1 0
          idx-2 1
-         recipies [3 7]]
-    (let [recipie-1 (recipies idx-1)
-          recipie-2 (recipies idx-2)
-          sum (+ recipie-1 recipie-2)
-          recipies (apply conj recipies (digits sum))
-          c (count recipies)]
-      (if (> c 10)
-        recipies
-        (recur (mod (inc recipie-1) c) (mod (inc recipie-2) c) recipies)))))
+         recipes [3 7]]
+    (prn idx-1 idx-2)
+    (let [recipe-1 (recipes idx-1)
+          recipe-2 (recipes idx-2)
+          sum (+ recipe-1 recipe-2)
+          recipes (apply conj recipes (digits sum))
+          c (count recipes)]
+      (if (> c 5)
+        recipes
+        (recur (mod (inc recipe-1) c) (mod (inc recipe-2) c) recipes)))))
