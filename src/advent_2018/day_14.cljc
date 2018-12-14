@@ -17,3 +17,6 @@
       (if (> c (+ n 10))
         (string/join (subvec recipes n (+ n 10)))
         (recur (mod (+ idx-1 recipe-1 1) c) (mod (+ idx-2 recipe-2 1) c) recipes)))))
+
+(defn part-1 []
+  (solve 825401))
