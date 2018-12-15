@@ -29,11 +29,11 @@
           recipes  (apply conj recipes (digits sum))
           c        (count recipes)]
       (cond
-        (< c 20)
+        (< c 10)
         (recur (mod (+ idx-1 recipe-1 1) c) (mod (+ idx-2 recipe-2 1) c) recipes)
 
-        #_(= desired (subvec recipes (- c (count desired) 1) (count desired)))
-        #_(- c (count desired) 1)
+        (= desired (subvec recipes (- c (count desired) 1) (count desired)))
+        (- c (count desired) 1)
 
         (= desired (subvec recipes (- c (count desired))))
         (- c (count desired))
