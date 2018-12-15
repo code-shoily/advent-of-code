@@ -32,7 +32,7 @@
         (< c 10)
         (recur (mod (+ idx-1 recipe-1 1) c) (mod (+ idx-2 recipe-2 1) c) recipes)
 
-        (= desired (subvec recipes (- c (count desired) 1) (count desired)))
+        (= desired (subvec recipes (- c (count desired) 1) (dec c)))
         (- c (count desired) 1)
 
         (= desired (subvec recipes (- c (count desired))))
