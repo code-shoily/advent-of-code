@@ -40,3 +40,6 @@
 
         :else
         (recur (mod (+ idx-1 recipe-1 1) c) (mod (+ idx-2 recipe-2 1) c) recipes)))))
+
+(defn part-2 []
+  (solve-2 [8 2 5 4 0 1]))
