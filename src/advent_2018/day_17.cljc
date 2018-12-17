@@ -4,9 +4,9 @@
    [#?(:clj clojure.java.io :cljs planck.io) :as io]
    [clojure.string :as string]))
 
-(def input (-> "advent_2018/day_17/input" io/resource slurp))
+#_(def input (-> "advent_2018/day_17/input" io/resource slurp))
 
-#_(def input "x=495, y=2..7\ny=7, x=495..501\nx=501, y=3..7\nx=498, y=2..4\nx=506, y=1..2\nx=498, y=10..13\nx=504, y=10..13\ny=13, x=498..504")
+(def input "x=495, y=2..7\ny=7, x=495..501\nx=501, y=3..7\nx=498, y=2..4\nx=506, y=1..2\nx=498, y=10..13\nx=504, y=10..13\ny=13, x=498..504")
 
 (defn parse-vein [s]
   (let [[a b1 b2] (map read-string (re-seq #"\d+" s))]
@@ -15,8 +15,34 @@
            #(vector % a))
       (range b1 (inc b2)))))
 
+(defn flow [clay water max-y [x y :as coords]]
+  (let [down  [x (inc y)]
+        left  [(dec x) y]
+        right [(inc x) y]
+        sand? (fn [coords]
+                (and (not (clay coords))
+                     (not (water coords))))]
+    (cond
+      (= y max-y)
+      water
+
+      (sand? down)
+      (recur clay (conj water down) max-y down)
+
+      :else
+      (into
+        (if (and (sand? left)
+                 (not (sand? down)))
+          (flow clay (conj water left) max-y left)
+          #{})
+        (if (and (sand? right)
+                 (not (sand? down)))
+          (flow clay (conj water right) max-y right)
+          #{})))))
+
 (defn part-1 []
-  (let [clay (into #{} (mapcat parse-vein (string/split-lines input)))
+  (let [clay  (into #{} (mapcat parse-vein (string/split-lines input)))
         min-y (apply min (map second clay))
-        max-y (apply max (map second clay))]
-    [min-y max-y]))
+        max-y (apply max (map second clay))
+        water (flow clay #{} max-y [500 min-y])]
+    (count water)))
