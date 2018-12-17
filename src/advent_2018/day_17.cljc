@@ -8,6 +8,12 @@
 
 (def input "x=495, y=2..7\ny=7, x=495..501\nx=501, y=3..7\nx=498, y=2..4\nx=506, y=1..2\nx=498, y=10..13\nx=504, y=10..13\ny=13, x=498..504")
 
-(defn parse-range [s]
-  (let [[x y1 y2] (map read-string (re-seq #"\d+" s))]
-    (map #(vector x %) (range y1 (inc y2)))))
+(defn parse-vein [s]
+  (let [[a b1 b2] (map read-string (re-seq #"\d+" s))]
+    (map (if (= (first s) \x)
+           #(vector a %)
+           #(vector % a))
+      (range b1 (inc b2)))))
+
+(defn part-1
+  (let [clay (into #{} (mapcat parse-vein (string/split-lines input)))]))
