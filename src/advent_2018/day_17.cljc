@@ -16,33 +16,36 @@
       (range b1 (inc b2)))))
 
 (defn flow [clay water max-y [x y :as coords]]
+  (prn x y)
   (let [down  [x (inc y)]
         left  [(dec x) y]
         right [(inc x) y]
-        sand? (fn [coords]
+        sand (fn [coords]
                 (and (not (clay coords))
                      (not (water coords))))]
     (cond
       (= y max-y)
-      water
+      (assoc water coords \|)
 
-      (sand? down)
-      (recur clay (conj water down) max-y down)
+      (sand down)
+      (recur clay (assoc water coords \|) max-y down)
 
       :else
       (into
-        (if (and (sand? left)
-                 (not (sand? down)))
-          (flow clay (conj water left) max-y left)
-          #{})
-        (if (and (sand? right)
-                 (not (sand? down)))
-          (flow clay (conj water right) max-y right)
-          #{})))))
+        (if (and (sand left)
+                 (or (clay down)
+                     (= \~ (water down))))
+          (flow clay (assoc water coords (if (clay down) \~ \|)) max-y left)
+          water)
+        (if (and (sand right)
+                 (or (clay down)
+                     (= \~ (water down))))
+          (flow clay (assoc water coords (if (clay down) \~ \|)) max-y right)
+          water)))))
 
 (defn part-1 []
   (let [clay  (into #{} (mapcat parse-vein (string/split-lines input)))
         min-y (apply min (map second clay))
         max-y (apply max (map second clay))
-        water (flow clay #{} max-y [500 min-y])]
-    (count water)))
+        water (flow clay {} max-y [500 min-y])]
+    water))
