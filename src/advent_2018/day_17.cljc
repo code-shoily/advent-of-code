@@ -15,44 +15,55 @@
            #(vector % a))
       (range b1 (inc b2)))))
 
-(defn flow [clay water max-y [x y :as coords]]
-  (prn x y)
-  (let [down  [x (inc y)]
-        left  [(dec x) y]
-        right [(inc x) y]
-        sand (fn [coords]
-                (and (not (clay coords))
-                     (not (water coords))))]
-    (cond
-      (= y max-y)
-      (assoc water coords \|)
-
-      (sand down)
-      (let [water (flow clay water max-y down)]
-        (if (= \~ (water down))
-          (flow clay water max-y coords)
-          (flow clay (assoc water coords \|) max-y down)))
-
-      :else
-      (into
-        (if (and (sand left)
-                 (or (clay down)
-                     (= \~ (water down))))
-          (flow clay (assoc water coords (if (clay down) \~ \|)) max-y left)
-          (assoc water coords \~))
-        (if (and (sand right)
-                 (or (clay down)
-                     (= \~ (water down))))
-          (flow clay (assoc water coords (if (clay down) \~ \|)) max-y right)
-          (assoc water coords \~))))))
-
 (defn display [clay water]
   (doseq [y (range 0 14)]
     (doseq [x (range 494 508)]
       (if (clay [x y])
         (print "#")
         (print (or (water [x y]) "."))))
-    (newline)))
+    (newline))
+  (newline))
+
+(defn flow [clay water max-y [x y :as coords]]
+  (display clay water)
+  (let [down  [x (inc y)]
+        left  [(dec x) y]
+        right [(inc x) y]
+        sand (fn [coords]
+                (and (not (clay coords))
+                     (not (water coords))))
+        pool (fn [coords]
+               (= \~ (water coords)))
+        block (fn [coords]
+                (or (pool coords)
+                    (clay coords)))
+        water (assoc water coords \|)]
+    (cond
+      (= y max-y)
+      water
+
+      (and (block down)
+           (block left)
+           (block right))
+      (assoc water coords \~)
+
+      (sand down)
+      (flow clay water max-y down)
+
+      (clay left)
+      (assoc water coords \-)
+
+      (clay right)
+      (assoc water coords \-)
+
+      (sand left)
+      (flow clay water max-y left)
+
+      (sand right)
+      (flow clay water max-y right)
+
+      :else
+      water)))
 
 (defn part-1 []
   (let [clay  (into #{} (mapcat parse-vein (string/split-lines input)))
