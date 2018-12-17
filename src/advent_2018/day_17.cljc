@@ -29,19 +29,19 @@
   (let [down   (fn [[x y]] [x (inc y)])
         left   (fn [[x y]] [(dec x) y])
         right  (fn [[x y]] [(inc x) y])
-        sand? (fn [coords]
-                (and (not (clay coords))
-                     (not (water coords))))
+        sand?  (fn [coords]
+                 (and (not (clay coords))
+                      (not (water coords))))
         holds? (fn holds? [dir coords]
                  (and (not (sand? (down coords)))
                       (or (clay (dir coords))
                           (holds? dir (dir coords)))))
-        fill (fn fill [water dir coords]
-               (if (clay (dir coords))
-                 (assoc water coords \~)
-                 (assoc (fill water dir (dir coords))
-                   coords \~)))
-        water (assoc water coords \|)]
+        fill   (fn fill [water dir coords]
+                 (-> (cond-> water
+                       (not (clay (dir coords)))
+                       (fill dir (dir coords)))
+                   (assoc coords \~)))
+        water  (assoc water coords \|)]
     (cond
       (= (second coords) max-y)
       water
