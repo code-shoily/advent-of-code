@@ -28,7 +28,10 @@
       (assoc water coords \|)
 
       (sand down)
-      (recur clay (assoc water coords \|) max-y down)
+      (let [water (flow clay water max-y down)]
+        (if (= \~ (water down))
+          (flow clay water max-y coords)
+          (flow clay (assoc water coords \|) max-y down)))
 
       :else
       (into
@@ -36,12 +39,12 @@
                  (or (clay down)
                      (= \~ (water down))))
           (flow clay (assoc water coords (if (clay down) \~ \|)) max-y left)
-          water)
+          (assoc water coords \~))
         (if (and (sand right)
                  (or (clay down)
                      (= \~ (water down))))
           (flow clay (assoc water coords (if (clay down) \~ \|)) max-y right)
-          water)))))
+          (assoc water coords \~))))))
 
 (defn display [clay water]
   (doseq [y (range 0 14)]
