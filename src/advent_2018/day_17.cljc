@@ -43,9 +43,17 @@
           (flow clay (assoc water coords (if (clay down) \~ \|)) max-y right)
           water)))))
 
+(defn display [clay water]
+  (doseq [y (range 0 14)]
+    (doseq [x (range 494 508)]
+      (if (clay [x y])
+        (print "#")
+        (print (or (water [x y]) "."))))
+    (newline)))
+
 (defn part-1 []
   (let [clay  (into #{} (mapcat parse-vein (string/split-lines input)))
         min-y (apply min (map second clay))
         max-y (apply max (map second clay))
         water (flow clay {} max-y [500 min-y])]
-    water))
+    (display clay water)))
