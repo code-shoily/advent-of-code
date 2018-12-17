@@ -24,43 +24,37 @@
     (newline))
   (newline))
 
-(defn flow [clay water max-y [x y :as coords]]
+(defn flow [clay water max-y coords]
   (display clay water)
-  (let [down  [x (inc y)]
-        left  [(dec x) y]
-        right [(inc x) y]
-        sand (fn [coords]
+  (let [down   (fn [[x y]] [x (inc y)])
+        left   (fn [[x y]] [(dec x) y])
+        right  (fn [[x y]] [(inc x) y])
+        sand? (fn [coords]
                 (and (not (clay coords))
                      (not (water coords))))
-        pool (fn [coords]
-               (= \~ (water coords)))
-        block (fn [coords]
-                (or (pool coords)
-                    (clay coords)))
+        holds? (fn holds? [dir coords]
+                 (and (not (sand? (down coords)))
+                      (or (clay (dir coords))
+                          (holds? dir (dir coords)))))
+        fill (fn fill [water dir coords]
+               (if (clay (dir coords))
+                 (assoc water coords \~)
+                 (assoc (fill water dir (dir coords))
+                   coords \~)))
         water (assoc water coords \|)]
     (cond
-      (= y max-y)
+      (= (second coords) max-y)
       water
 
-      (and (block down)
-           (block left)
-           (block right))
-      (assoc water coords \~)
+      (sand? (down coords))
+      (let [water (flow clay water max-y (down coords))]
+        (flow clay water max-y coords))
 
-      (sand down)
-      (flow clay water max-y down)
-
-      (clay left)
-      (assoc water coords \-)
-
-      (clay right)
-      (assoc water coords \-)
-
-      (sand left)
-      (flow clay water max-y left)
-
-      (sand right)
-      (flow clay water max-y right)
+      (and (holds? left coords)
+           (holds? right coords))
+      (-> water
+        (fill left coords)
+        (fill right coords))
 
       :else
       water)))
