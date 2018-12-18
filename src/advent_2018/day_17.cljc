@@ -67,7 +67,9 @@
                      (= \~ (water (left (down coords))))))
           (flow clay water max-y (left coords))
           water)
-        #_(if (sand? (right coords))
+        (if (and (sand? (right coords))
+                 (or (clay (right (down coords)))
+                     (= \~ (water (right (down coords))))))
           (flow clay water max-y (right coords))
           water)))))
 
