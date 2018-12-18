@@ -48,7 +48,7 @@
 
       (sand? (down coords))
       (let [water (flow clay water max-y (down coords))]
-        (flow clay water max-y coords))
+        (recur clay water max-y coords))
 
       (and (holds? left coords)
            (holds? right coords))
