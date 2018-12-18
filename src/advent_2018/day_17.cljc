@@ -73,13 +73,14 @@
           (flow clay water max-y (right coords))
           water)))))
 
-(defn part-1 []
+(defn final-water [input]
   (let [clay  (into #{} (mapcat parse-vein (string/split-lines input)))
         min-y (apply min (map second clay))
-        max-y (apply max (map second clay))
-        water (flow clay {} max-y [500 min-y])]
-    (display clay water)
-    (count water)))
+        max-y (apply max (map second clay))]
+    (flow clay {} max-y [500 min-y])))
 
-;; too low
-1135
+(defn part-1 []
+  (count (final-water input)))
+
+(defn part-2 []
+  (count (filter (fn [[x y]] (= y \~)) (final-water input))))
