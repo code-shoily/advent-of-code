@@ -63,13 +63,13 @@
       :else
       (into
         (if (and (sand? (left coords))
-                 (or (clay (left (down coords)))
-                     (= \~ (water (left (down coords))))))
+                 (or (clay (down coords))
+                     (= \~ (water (down coords)))))
           (flow clay water max-y (left coords))
           water)
         (if (and (sand? (right coords))
-                 (or (clay (right (down coords)))
-                     (= \~ (water (right (down coords))))))
+                 (or (clay (down coords))
+                     (= \~ (water (down coords)))))
           (flow clay water max-y (right coords))
           water)))))
 
