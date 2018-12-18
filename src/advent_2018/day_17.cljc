@@ -43,6 +43,12 @@
                        (not (clay (dir coords)))
                        (fill dir (dir coords)))
                    (assoc coords \~)))
+        spill  (fn [water dir coords]
+                 (if (and (sand? (dir coords))
+                          (or (clay (down coords))
+                              (= \~ (water (down coords)))))
+                   (flow clay water max-y (dir coords))
+                   water))
         water  (assoc water coords \|)]
     (cond
       (= (second coords) max-y)
@@ -59,19 +65,9 @@
         (fill right coords))
 
       :else
-      (if (and (sand? (left coords))
-               (or (clay (down coords))
-                   (= \~ (water (down coords)))))
-        (flow clay (if (and (sand? (right coords))
-                            (or (clay (down coords))
-                                (= \~ (water (down coords)))))
-                     (flow clay water max-y (right coords))
-                     water) max-y (left coords))
-        (if (and (sand? (right coords))
-                 (or (clay (down coords))
-                     (= \~ (water (down coords)))))
-          (flow clay water max-y (right coords))
-          water)))))
+      (-> water
+        (spill right coords)
+        (spill left coords)))))
 
 (defn final-water [input]
   (let [clay  (into #{} (mapcat parse-vein (string/split-lines input)))
