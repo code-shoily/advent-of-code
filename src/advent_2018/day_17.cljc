@@ -4,9 +4,9 @@
    [#?(:clj clojure.java.io :cljs planck.io) :as io]
    [clojure.string :as string]))
 
-(def input (-> "advent_2018/day_17/input" io/resource slurp))
+#_(def input (-> "advent_2018/day_17/input" io/resource slurp))
 
-#_(def input "x=495, y=2..7\ny=7, x=495..501\nx=501, y=3..7\nx=498, y=2..4\nx=506, y=1..2\nx=498, y=10..13\nx=504, y=10..13\ny=13, x=498..504")
+(def input "x=495, y=2..7\ny=7, x=495..501\nx=501, y=3..7\nx=498, y=2..4\nx=506, y=1..2\nx=498, y=10..13\nx=504, y=10..13\ny=13, x=498..504")
 
 (defn parse-vein [s]
   (let [[a b1 b2] (map read-string (re-seq #"\d+" s))]
@@ -16,8 +16,8 @@
       (range b1 (inc b2)))))
 
 (defn display [clay water]
-  (let [xs (range (dec (apply min (map first clay))) (inc (apply max (map first clay))))]
-    (doseq [y (range (dec (apply min (map second clay))) (inc (apply max (map second clay))))]
+  (let [xs (range (dec (apply min (map first clay))) (+ 2 (apply max (map first clay))))]
+    (doseq [y (range (apply min (map second clay)) (inc (apply max (map second clay))))]
       (doseq [x xs]
         (if (clay [x y])
           (print "#")
