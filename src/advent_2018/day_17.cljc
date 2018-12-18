@@ -16,16 +16,17 @@
       (range b1 (inc b2)))))
 
 (defn display [clay water]
-  (doseq [y (range 0 14)]
-    (doseq [x (range 494 508)]
-      (if (clay [x y])
-        (print "#")
-        (print (or (water [x y]) "."))))
-    (newline))
+  (let [xs (range (dec (apply min (map first clay))) (inc (apply max (map first clay))))]
+    (doseq [y (range (dec (apply min (map second clay))) (inc (apply max (map second clay))))]
+      (doseq [x xs]
+        (if (clay [x y])
+          (print "#")
+          (print (or (water [x y]) "."))))
+      (newline)))
   (newline))
 
 (defn flow [clay water max-y coords]
-  (display clay water)
+  #_(display clay water)
   (let [down   (fn [[x y]] [x (inc y)])
         left   (fn [[x y]] [(dec x) y])
         right  (fn [[x y]] [(inc x) y])
@@ -75,4 +76,8 @@
         min-y (apply min (map second clay))
         max-y (apply max (map second clay))
         water (flow clay {} max-y [500 min-y])]
-    (display clay water)))
+    (display clay water)
+    (count water)))
+
+;; too low
+1135
