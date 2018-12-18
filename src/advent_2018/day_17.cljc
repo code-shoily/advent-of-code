@@ -44,9 +44,6 @@
                    (assoc coords \~)))
         water  (assoc water coords \|)]
     (cond
-      (clay coords)
-      water
-
       (= (second coords) max-y)
       water
 
